@@ -15,7 +15,9 @@ namespace Garage2.Models
         public DateTime Arrival { get; set; }
 
         [ReadOnly(true)]
-        [Display(Name = "Time parked")]
         public TimeSpan ParkLenght => DateTime.Now - Arrival;
+
+        [Display(Name = "Time parked")]
+        public string ParkLengthFormatted => $"{ParkLenght:hh\\:mm}";
     }
 }

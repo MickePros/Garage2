@@ -22,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Arrival)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ParkLenght)
+                @Html.DisplayNameFor(model => model.ParkLengthFormatted)
             </th>
             <th></th>
         </tr>
@@ -40,7 +40,7 @@
                 @Html.DisplayFor(modelItem => item.Arrival)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ParkLenght)
+                    @Html.DisplayFor(modelItem => item.ParkLengthFormatted)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.RegNr">Edit</a> |
