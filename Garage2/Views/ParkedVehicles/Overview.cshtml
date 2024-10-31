@@ -17,9 +17,9 @@
                 <option selected="selected" value="">Select @Html.DisplayNameFor(model => model.VehicleType)</option>
             </select>
         </div>
-        <input type="text" class="form-control" name="regNr" placeholder="Search for @Html.DisplayNameFor(model => model.RegNr)" />
+        <input type="text" id="filter-regnr" class="form-control" name="regNr" placeholder="Search for @Html.DisplayNameFor(model => model.RegNr)" />
         <input type="date" name="date" />
-        <div class="input-group-append">
+        <div class="input-group-append" id="filter-submit">
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
     </div>

@@ -21,7 +21,23 @@ body {
   margin-bottom: 60px;
 }
 
+#filter-regnr {
+    margin:0 5px;
+}
+
+#filter-submit {
+    margin-left: 5px;
+}
+
 th {
     cursor: pointer;
     text-decoration:underline;
+}
+
+tbody tr {
+    background-color: #f0f0f0;
+}
+
+tbody > tr:nth-child(odd) {
+    background-color: #dbdbdb;
 }
