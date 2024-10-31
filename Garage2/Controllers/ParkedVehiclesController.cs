@@ -27,22 +27,15 @@ namespace Garage2.Controllers
 
         public async Task<IActionResult> Overview()
         {
-            var vehicles = await _context.ParkedVehicle.ToListAsync();
-            List<OverviewViewModel> ve = new List<OverviewViewModel>();
-            OverviewViewModel vehicle;
-
-            foreach (var v in vehicles)
+            var vehicles = await _context.ParkedVehicle
+            .Select(v => new OverviewViewModel
             {
-                vehicle = new OverviewViewModel();
+                VehicleType = v.VehicleType,
+                RegNr = v.RegNr,
+                Arrival = v.Arrival
+            }).ToListAsync();
 
-                vehicle.VehicleType = v.VehicleType;
-                vehicle.RegNr = v.RegNr;
-                vehicle.Arrival = v.Arrival;
-
-                ve.Add(vehicle);
-            }
-
-            return View(ve);
+            return View(vehicles);
         }
 
         // GET: ParkedVehicles/Details/5
