@@ -20,10 +20,10 @@ namespace Garage2.Controllers
         }
 
         // GET: ParkedVehicles
-        public async Task<IActionResult> Index()
+        /*public async Task<IActionResult> Index()
         {
             return View(await _context.ParkedVehicle.ToListAsync());
-        }
+        }*/
 
         public async Task<IActionResult> Overview()
         {
@@ -80,7 +80,7 @@ namespace Garage2.Controllers
             {
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Overview));
             }
             return View(parkedVehicle);
         }
@@ -131,7 +131,7 @@ namespace Garage2.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Overview));
             }
             return View(parkedVehicle);
         }
@@ -166,7 +166,7 @@ namespace Garage2.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Overview));
         }
 
         private bool ParkedVehicleExists(string id)
