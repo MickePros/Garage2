@@ -45,6 +45,22 @@ namespace Garage2.Controllers
             return View(ve);
         }
 
+        public async Task<IActionResult> Filter(string regNr)
+        {
+            var context = _context.ParkedVehicle.Select(v => new OverviewViewModel
+            {
+                VehicleType = v.VehicleType,
+                RegNr = v.RegNr,
+                Arrival = v.Arrival
+            });
+
+            var model = string.IsNullOrWhiteSpace(regNr) ?
+                context :
+                context.Where(v => v.RegNr.Contains(regNr));
+
+            return View(nameof(Overview), await model.ToListAsync());
+        }
+
         // GET: ParkedVehicles/Details/5
         public async Task<IActionResult> Details(string id)
         {
