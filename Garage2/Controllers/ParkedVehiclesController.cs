@@ -45,7 +45,7 @@ namespace Garage2.Controllers
             return View(ve);
         }
 
-        public async Task<IActionResult> Filter(string regNr)
+        public async Task<IActionResult> Filter(string regNr, int? type, string? date)
         {
             var context = _context.ParkedVehicle.Select(v => new OverviewViewModel
             {
@@ -57,6 +57,14 @@ namespace Garage2.Controllers
             var model = string.IsNullOrWhiteSpace(regNr) ?
                 context :
                 context.Where(v => v.RegNr.Contains(regNr));
+
+            model = type is null ?
+                model :
+                model.Where(v => (int)v.VehicleType == type);
+
+            model = date is null ?
+                model :
+                model.Where(v => v.Arrival > DateTime.Parse(date + " 00:00:00") && v.Arrival < DateTime.Parse(date + " 23:59:59"));
 
             return View(nameof(Overview), await model.ToListAsync());
         }
