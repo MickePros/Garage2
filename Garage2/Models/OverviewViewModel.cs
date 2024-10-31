@@ -18,6 +18,21 @@ namespace Garage2.Models
         public TimeSpan ParkLenght => DateTime.Now - Arrival;
 
         [Display(Name = "Time parked")]
-        public string ParkLengthFormatted => $"{ParkLenght:hh\\:mm}";
+        public string ParkLengthFormatted
+        {
+            get
+            {
+                var days = ParkLenght.Days;
+                var hours = ParkLenght.Hours;
+                var minutes = ParkLenght.Minutes;
+
+               //Returns a string with only values greater than 0 
+                return days > 0
+                    ? $"{days}days {hours}h {minutes}min" 
+                    : hours > 0
+                        ? $"{hours}h {minutes}min"      
+                        : $"{minutes} minutes";             
+            }
+        }
     }
 }
