@@ -16,11 +16,6 @@ namespace Garage2.Models
 
         [ReadOnly(true)]
         [Display(Name = "Time parked")]
-        public TimeSpan ParkLenght {  get; private set; }
-
-        public OverviewViewModel()
-        {
-            ParkLenght = DateTime.Now - Arrival;
-        }
+        public TimeSpan ParkLenght => DateTime.Now - Arrival;
     }
 }
