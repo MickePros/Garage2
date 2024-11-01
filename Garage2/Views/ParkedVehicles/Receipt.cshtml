@@ -1,0 +1,18 @@
+﻿@model Garage2.Models.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+}
+
+<h1>Receipt</h1>
+
+<div>
+    <p><strong>License Plate:</strong> @Model.RegNr</p>
+    <p><strong>Arrival Time:</strong> @Model.Arrival</p>
+    <p><strong>Departure Time:</strong> @Model.Departure</p>
+    <p><strong>Time Parked:</strong> @Model.ParkLengthFormatted</p>
+    <p><strong>Total Parking Fee:</strong> $@Model.TotalFee</p>
+    <p>@Model.FeeMessage</p>
+</div>
+
+<button onclick="window.print()">Print Receipt</button>

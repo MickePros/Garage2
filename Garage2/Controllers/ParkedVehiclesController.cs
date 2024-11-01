@@ -186,6 +186,33 @@ namespace Garage2.Controllers
             return RedirectToAction(nameof(Overview));
         }
 
+        // GET: ParkedVehicles/Checkout
+public async Task<IActionResult> Checkout(string id)
+{
+    if (string.IsNullOrWhiteSpace(id))
+    {
+        return NotFound();
+    }
+
+    var parkedVehicle = await _context.ParkedVehicle
+        .FirstOrDefaultAsync(m => m.RegNr == id);
+    if (parkedVehicle == null)
+    {
+        return NotFound();
+    }
+
+    // Skapar ReceiptViewModel
+    var receipt = new ReceiptViewModel
+    {
+        RegNr = parkedVehicle.RegNr,
+        Arrival = parkedVehicle.Arrival,
+        Departure = DateTime.Now, // Utcheckning
+    };
+
+    // Returnera vyn "Receipt" med ReceiptViewModel
+    return View("Receipt", receipt);
+        }
+
         private bool ParkedVehicleExists(string id)
         {
             return _context.ParkedVehicle.Any(e => e.RegNr == id);
