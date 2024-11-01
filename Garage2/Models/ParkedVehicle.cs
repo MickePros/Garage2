@@ -20,6 +20,10 @@ namespace Garage2.Models
         [Range(0, 18)]
         public int Wheels { get; set; }
 
+        [ReadOnly(true)]
+        [Display(Name = "Parking spot")]
+        public int ParkingSpot { get; set; }
+
         [Required()]
         [ReadOnly(true)]
         public DateTime Arrival { get; private set; }
