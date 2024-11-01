@@ -27,15 +27,29 @@ namespace Garage2.Controllers
 
         public async Task<IActionResult> Overview()
         {
-            var vehicles = await _context.ParkedVehicle
+            var vehicles = _context.ParkedVehicle
             .Select(v => new OverviewViewModel
             {
                 VehicleType = v.VehicleType,
                 RegNr = v.RegNr,
                 Arrival = v.Arrival
-            }).ToListAsync();
+            });
 
-            return View(vehicles);
+            var garage = new GarageData
+            {
+                Vehicles = await vehicles.ToListAsync(),
+                Garage = new GarageModel
+                {
+                    SpacesOccupied = _context.ParkedVehicle.Count(),
+                    TotalNrCars = vehicles.Where(v => (int)v.VehicleType == 0).Count(),
+                    TotalNrTrucks = vehicles.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = vehicles.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = vehicles.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = vehicles.Where(v => (int)v.VehicleType == 4).Count()
+                }
+            };
+
+            return View(garage);
         }
 
         public async Task<IActionResult> Filter(string regNr, int? type, string? date)
