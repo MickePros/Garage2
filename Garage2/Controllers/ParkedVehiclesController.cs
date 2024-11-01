@@ -38,6 +38,30 @@ namespace Garage2.Controllers
             return View(vehicles);
         }
 
+        public async Task<IActionResult> Filter(string regNr, int? type, string? date)
+        {
+            var context = _context.ParkedVehicle.Select(v => new OverviewViewModel
+            {
+                VehicleType = v.VehicleType,
+                RegNr = v.RegNr,
+                Arrival = v.Arrival
+            });
+
+            var model = string.IsNullOrWhiteSpace(regNr) ?
+                context :
+                context.Where(v => v.RegNr.Contains(regNr));
+
+            model = type is null ?
+                model :
+                model.Where(v => (int)v.VehicleType == type);
+
+            model = date is null ?
+                model :
+                model.Where(v => v.Arrival > DateTime.Parse(date + " 00:00:00") && v.Arrival < DateTime.Parse(date + " 23:59:59"));
+
+            return View(nameof(Overview), await model.ToListAsync());
+        }
+
         // GET: ParkedVehicles/Details/5
         public async Task<IActionResult> Details(string id)
         {
