@@ -27,7 +27,8 @@ namespace Garage2.Controllers
 
         public async Task<IActionResult> Overview()
         {
-            var vehicles = _context.ParkedVehicle
+            var context = _context.ParkedVehicle;
+            var vehicles = context
             .Select(v => new OverviewViewModel
             {
                 VehicleType = v.VehicleType,
@@ -35,17 +36,25 @@ namespace Garage2.Controllers
                 Arrival = v.Arrival
             });
 
+            int parkingLength = 0;
+            foreach (var item in vehicles.ToList())
+            {
+                parkingLength += item.ParkLenght.Days;
+            }
+
             var garage = new GarageData
             {
                 Vehicles = await vehicles.ToListAsync(),
                 Garage = new GarageModel
                 {
-                    SpacesOccupied = _context.ParkedVehicle.Count(),
-                    TotalNrCars = vehicles.Where(v => (int)v.VehicleType == 0).Count(),
-                    TotalNrTrucks = vehicles.Where(v => (int)v.VehicleType == 1).Count(),
-                    TotalNrMotorcycles = vehicles.Where(v => (int)v.VehicleType == 2).Count(),
-                    TotalNrBoats = vehicles.Where(v => (int)v.VehicleType == 3).Count(),
-                    TotalNrAirplanes = vehicles.Where(v => (int)v.VehicleType == 4).Count()
+                    SpacesOccupied = context.Count(),
+                    TotalNrCars = context.Where(v => v.VehicleType == 0).Count(),
+                    TotalNrTrucks = context.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = context.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = context.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = context.Where(v => (int)v.VehicleType == 4).Count(),
+                    TotalNrOfWheels = context.Select(v => v.Wheels).Sum(),
+                    TotalProfit = parkingLength * 525
                 }
             };
 
