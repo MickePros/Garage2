@@ -12,11 +12,15 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="VehicleType" class="control-label"></label>
-                <select asp-for="VehicleType" class="form-control"></select>
+                <select asp-for="VehicleType" class="form-control" asp-items="@(Html.GetEnumSelectList<VehicleType>())">
+                    <option selected="selected" value="">Please select</option>
+                </select>
                 <span asp-validation-for="VehicleType" class="text-danger"></span>
             </div>
+
             <input type="hidden" asp-for="RegNr" />
             <div class="form-group">
                 <label asp-for="Color" class="control-label"></label>
@@ -39,11 +43,6 @@
                 <span asp-validation-for="Wheels" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Arrival" class="control-label"></label>
-                <input asp-for="Arrival" class="form-control" />
-                <span asp-validation-for="Arrival" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -51,7 +50,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Overview">Back to Overview</a>
 </div>
 
 @section Scripts {
