@@ -1,3 +1,6 @@
 ﻿{
-    "GarageCapacity": 30
+  "garageOne": {
+    "name": "",
+    "capacity": 30
+  }
 }
