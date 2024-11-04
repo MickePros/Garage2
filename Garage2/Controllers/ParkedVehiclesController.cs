@@ -115,7 +115,18 @@ namespace Garage2.Controllers
             {
                 return NotFound();
             }
-            return View(parkedVehicle);
+
+            var viewModel = new EditVehicleViewModel
+            {
+                VehicleType = parkedVehicle.VehicleType,
+                RegNr = parkedVehicle.RegNr,
+                Color = parkedVehicle.Color,
+                Brand = parkedVehicle.Brand,
+                Model = parkedVehicle.Model,
+                Wheels = parkedVehicle.Wheels
+            };
+
+            return View(viewModel);
         }
 
         // POST: ParkedVehicles/Edit/5
@@ -123,24 +134,38 @@ namespace Garage2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels")] EditVehicleViewModel viewModel)
         {
-            if (id != parkedVehicle.RegNr)
+            if (id != viewModel.RegNr)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                // Get the existing entity from the database
+                var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
+
+                if (parkedVehicle == null)
                 {
+                    return NotFound();
+                }
+
+                parkedVehicle.VehicleType = viewModel.VehicleType;
+                parkedVehicle.Color = viewModel.Color;
+                parkedVehicle.Brand = viewModel.Brand;
+                parkedVehicle.Model = viewModel.Model;
+                parkedVehicle.Wheels = viewModel.Wheels;
+
+                try
+                    {
                     _context.Update(parkedVehicle);
                     _context.Entry(parkedVehicle).Property(v => v.Arrival).IsModified = false;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ParkedVehicleExists(parkedVehicle.RegNr))
+                    if (!ParkedVehicleExists(viewModel.RegNr))
                     {
                         return NotFound();
                     }
@@ -151,7 +176,7 @@ namespace Garage2.Controllers
                 }
                 return RedirectToAction(nameof(Overview));
             }
-            return View(parkedVehicle);
+            return View(viewModel);
         }
 
         // GET: ParkedVehicles/Delete/5
