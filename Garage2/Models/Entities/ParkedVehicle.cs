@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage2.Models
+namespace Garage2.Models.Entities
 {
     public class ParkedVehicle
     {
@@ -20,6 +20,7 @@ namespace Garage2.Models
         [Range(0, 18)]
         public int Wheels { get; set; }
 
+        //Will take the value of the first parking spot the vehicle occupies
         [ReadOnly(true)]
         [Display(Name = "Parking spot")]
         public int ParkingSpot { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Garage2.Models.ViewModels;
 
 namespace Garage2.Models
 {

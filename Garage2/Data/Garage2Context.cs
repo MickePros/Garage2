@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Garage2.Models;
+using Garage2.Models.Entities;
+using Garage2.Models.ViewModels;
 
 namespace Garage2.Data
 {
@@ -14,7 +15,8 @@ namespace Garage2.Data
         {
         }
 
-        public DbSet<Garage2.Models.ParkedVehicle> ParkedVehicle { get; set; } = default!;
-        public DbSet<Garage2.Models.OverviewViewModel> OverviewViewModel { get; set; } = default!;
+        public DbSet<ParkedVehicle> ParkedVehicle { get; set; } = default!;
+        public DbSet<OverviewViewModel> OverviewViewModel { get; set; } = default!;
+
     }
 }

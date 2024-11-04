@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage2.Models
+namespace Garage2.Models.ViewModels
 {
     public class OverviewViewModel
     {
@@ -26,12 +26,12 @@ namespace Garage2.Models
                 var hours = ParkLenght.Hours;
                 var minutes = ParkLenght.Minutes;
 
-               //Returns a string with only values greater than 0 
+                //Returns a string with only values greater than 0 
                 return days > 0
-                    ? $"{days}days {hours}h {minutes}min" 
+                    ? $"{days}days {hours}h {minutes}min"
                     : hours > 0
-                        ? $"{hours}h {minutes}min"      
-                        : $"{minutes} minutes";             
+                        ? $"{hours}h {minutes}min"
+                        : $"{minutes} minutes";
             }
         }
     }
