@@ -8,7 +8,6 @@ namespace Garage2.Models
         [Display(Name = "Vehicle type")]
         public VehicleType VehicleType { get; set; }
 
-        [Key]
         [Display(Name = "License plate")]
         public string RegNr { get; set; }
 
