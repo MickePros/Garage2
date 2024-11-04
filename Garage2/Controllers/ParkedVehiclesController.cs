@@ -135,6 +135,7 @@ namespace Garage2.Controllers
                 try
                 {
                     _context.Update(parkedVehicle);
+                    _context.Entry(parkedVehicle).Property(v => v.Arrival).IsModified = false;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
