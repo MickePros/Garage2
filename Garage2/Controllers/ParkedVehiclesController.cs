@@ -39,6 +39,7 @@ namespace Garage2.Controllers
             int parkingLength = 0;
             foreach (var item in vehicles.ToList())
             {
+                parkingLength += (item.ParkLenght.Days*24);
                 parkingLength += item.ParkLenght.Hours;
             }
 
@@ -85,6 +86,7 @@ namespace Garage2.Controllers
             int parkingLength = 0;
             foreach (var item in model.ToList())
             {
+                parkingLength += (item.ParkLenght.Days * 24);
                 parkingLength += item.ParkLenght.Hours;
             }
 
