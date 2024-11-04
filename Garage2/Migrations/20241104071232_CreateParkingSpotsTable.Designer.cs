@@ -4,6 +4,7 @@ using Garage2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage2.Migrations
 {
     [DbContext(typeof(Garage2Context))]
-    partial class Garage2ContextModelSnapshot : ModelSnapshot
+    [Migration("20241104071232_CreateParkingSpotsTable")]
+    partial class CreateParkingSpotsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,22 +57,6 @@ namespace Garage2.Migrations
                     b.HasKey("RegNr");
 
                     b.ToTable("ParkedVehicle");
-                });
-
-            modelBuilder.Entity("Garage2.Models.Entities.ParkingSpace", b =>
-                {
-                    b.Property<int>("ParkingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ParkingId"));
-
-                    b.Property<int>("Points")
-                        .HasColumnType("int");
-
-                    b.HasKey("ParkingId");
-
-                    b.ToTable("ParkingSpaces");
                 });
 
             modelBuilder.Entity("Garage2.Models.ViewModels.OverviewViewModel", b =>
