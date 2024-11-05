@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Garage2.Models.StatusViewModel>
+
+@{
+    ViewData["Title"] = "Status";
+}
+
+<h1>Status</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Overview">Back to Overview</a>
+</div>
