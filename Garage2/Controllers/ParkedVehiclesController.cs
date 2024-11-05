@@ -40,15 +40,39 @@ namespace Garage2.Controllers
 
         public async Task<IActionResult> Overview()
         {
-            var vehicles = await _context.ParkedVehicle
+            var context = _context.ParkedVehicle;
+            var vehicles = context
             .Select(v => new OverviewViewModel
             {
                 VehicleType = v.VehicleType,
                 RegNr = v.RegNr,
                 Arrival = v.Arrival
-            }).ToListAsync();
+            });
 
-            return View(vehicles);
+            int parkingLength = 0;
+            foreach (var item in vehicles.ToList())
+            {
+                parkingLength += (item.ParkLenght.Days*24);
+                parkingLength += item.ParkLenght.Hours;
+            }
+
+            var garage = new GarageData
+            {
+                Vehicles = await vehicles.ToListAsync(),
+                Garage = new GarageModel
+                {
+                    SpacesOccupied = context.Count(),
+                    TotalNrCars = context.Where(v => v.VehicleType == 0).Count(),
+                    TotalNrTrucks = context.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = context.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = context.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = context.Where(v => (int)v.VehicleType == 4).Count(),
+                    TotalNrOfWheels = context.Select(v => v.Wheels).Sum(),
+                    TotalProfit = parkingLength * 10
+                }
+            };
+
+            return View(garage);
         }
 
         public async Task<IActionResult> Filter(string regNr, int? type, string? date)
@@ -72,7 +96,30 @@ namespace Garage2.Controllers
                 model :
                 model.Where(v => v.Arrival > DateTime.Parse(date + " 00:00:00") && v.Arrival < DateTime.Parse(date + " 23:59:59"));
 
-            return View(nameof(Overview), await model.ToListAsync());
+            int parkingLength = 0;
+            foreach (var item in model.ToList())
+            {
+                parkingLength += (item.ParkLenght.Days * 24);
+                parkingLength += item.ParkLenght.Hours;
+            }
+
+            var garage = new GarageData
+            {
+                Vehicles = await model.ToListAsync(),
+                Garage = new GarageModel
+                {
+                    SpacesOccupied = context.Count(),
+                    TotalNrCars = context.Where(v => v.VehicleType == 0).Count(),
+                    TotalNrTrucks = context.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = context.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = context.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = context.Where(v => (int)v.VehicleType == 4).Count(),
+                    TotalNrOfWheels = _context.ParkedVehicle.Select(v => v.Wheels).Sum(),
+                    TotalProfit = parkingLength * 10
+                }
+            };
+
+            return View(nameof(Overview), garage);
         }
 
         // GET: ParkedVehicles/Details/5
@@ -100,8 +147,6 @@ namespace Garage2.Controllers
         }
 
         // POST: ParkedVehicles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
@@ -197,14 +242,25 @@ namespace Garage2.Controllers
 
 
 
+            var viewModel = new EditVehicleViewModel
+            {
+                VehicleType = parkedVehicle.VehicleType,
+                RegNr = parkedVehicle.RegNr,
+                Color = parkedVehicle.Color,
+                Brand = parkedVehicle.Brand,
+                Model = parkedVehicle.Model,
+                Wheels = parkedVehicle.Wheels
+            };
+
+            return View(viewModel);
+        }
+
         // POST: ParkedVehicles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels")] EditVehicleViewModel viewModel)
         {
-            if (id != parkedVehicle.RegNr)
+            if (id != viewModel.RegNr)
             {
                 return RedirectToAction(nameof(Status), new { msg = "Edit Fail!" });
                 //return NotFound();
@@ -228,8 +284,9 @@ namespace Garage2.Controllers
                 parkedVehicle.Wheels = viewModel.Wheels;
 
                 try
-                {
+                    {
                     _context.Update(parkedVehicle);
+                    _context.Entry(parkedVehicle).Property(v => v.Arrival).IsModified = false;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -267,8 +324,7 @@ namespace Garage2.Controllers
             {
                 return RedirectToAction(nameof(Status), new { msg = "Check Out Fail!" });
             }
-
-            return View(parkedVehicle);
+            return View(viewModel);
         }
 
         // POST: ParkedVehicles/Delete/5
@@ -321,12 +377,12 @@ namespace Garage2.Controllers
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
+                // Ta bort fordonet
                 _context.ParkedVehicle.Remove(parkedVehicle);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Overview));
-        }*/
+        }
 
         // Ny metod för att generera kvitto
         public async Task<IActionResult> Receipt(string regNr)
@@ -352,11 +408,9 @@ namespace Garage2.Controllers
             return View(receiptViewModel); // Returnera kvittovyn med modellen
         }
 
-        private bool ParkedVehicleExists(string id)
+    private bool ParkedVehicleExists(string id)
         {
             return _context.ParkedVehicle.Any(e => e.RegNr == id);
         }
     }
-
-   
 }

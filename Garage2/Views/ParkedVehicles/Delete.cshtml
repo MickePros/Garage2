@@ -1,57 +1,36 @@
 ﻿@model Garage2.Models.ParkedVehicle
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Check Out";
 }
 
-<h2>Check out</h2>
+<h1>Check Out</h1>
 
-<h3>Are you sure you want to check out this?</h3>
+<h3>Are you sure you want to check out this vehicle?</h3>
 <div>
-    <h4>ParkedVehicle</h4>
+    <h4>Parked Vehicle Details</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VehicleType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VehicleType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Color)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Color)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Wheels)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Wheels)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Arrival)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Arrival)
-        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.VehicleType)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.VehicleType)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Color)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Color)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Brand)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Brand)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Model)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Model)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Wheels)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Wheels)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Arrival)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Arrival)</dd>
     </dl>
-    
-    <form asp-action="Delete">
+
+    <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="RegNr" />
-        <input type="submit" value="Check out" class="btn btn-danger" /> |
-        <a asp-action="Overview">Back to Overview</a>
+        <input type="submit" value="Check Out" class="btn btn-danger" />
+        <a asp-action="Overview" class="btn btn-secondary">Back to Overview</a>
     </form>
+
+    <!-- Knapp för att visa kvitto -->
+    <a asp-action="Receipt" asp-route-regNr="@Model.RegNr" class="btn btn-info">Get Receipt</a>
 </div>

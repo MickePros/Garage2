@@ -1,0 +1,25 @@
+﻿@model Garage2.Models.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center">Receipt for Vehicle</h1>
+    <div class="border rounded p-4">
+        <h3>Registration Number: @Model.RegNr</h3>
+        <hr />
+        <p><strong>Arrival Time:</strong> @Model.Arrival.ToString("g")</p>
+        <p><strong>Departure Time:</strong> @Model.Departure.ToString("g")</p>
+        <p><strong>Duration Parked:</strong> @Model.ParkLengthFormatted</p>
+        <p><strong>Total Fee:</strong> @Model.TotalFee USD</p>
+        <p class="text-muted">@Model.FeeMessage</p>
+    </div>
+    <div class="text-center mt-3">
+        <a asp-action="Delete" asp-route-id="@Model.RegNr" class="btn btn-secondary">Back to Checkout</a>
+        <button onclick="window.print()" class="btn btn-primary">Print</button>
+    </div>
+</div>
+
+<!-- Lägg till Bootstrap CSS för styling om du använder det -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
