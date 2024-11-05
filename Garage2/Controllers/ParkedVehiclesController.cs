@@ -27,15 +27,39 @@ namespace Garage2.Controllers
 
         public async Task<IActionResult> Overview()
         {
-            var vehicles = await _context.ParkedVehicle
+            var context = _context.ParkedVehicle;
+            var vehicles = context
             .Select(v => new OverviewViewModel
             {
                 VehicleType = v.VehicleType,
                 RegNr = v.RegNr,
                 Arrival = v.Arrival
-            }).ToListAsync();
+            });
 
-            return View(vehicles);
+            int parkingLength = 0;
+            foreach (var item in vehicles.ToList())
+            {
+                parkingLength += (item.ParkLenght.Days*24);
+                parkingLength += item.ParkLenght.Hours;
+            }
+
+            var garage = new GarageData
+            {
+                Vehicles = await vehicles.ToListAsync(),
+                Garage = new GarageModel
+                {
+                    SpacesOccupied = context.Count(),
+                    TotalNrCars = context.Where(v => v.VehicleType == 0).Count(),
+                    TotalNrTrucks = context.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = context.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = context.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = context.Where(v => (int)v.VehicleType == 4).Count(),
+                    TotalNrOfWheels = context.Select(v => v.Wheels).Sum(),
+                    TotalProfit = parkingLength * 10
+                }
+            };
+
+            return View(garage);
         }
 
         public async Task<IActionResult> Filter(string regNr, int? type, string? date)
@@ -59,7 +83,30 @@ namespace Garage2.Controllers
                 model :
                 model.Where(v => v.Arrival > DateTime.Parse(date + " 00:00:00") && v.Arrival < DateTime.Parse(date + " 23:59:59"));
 
-            return View(nameof(Overview), await model.ToListAsync());
+            int parkingLength = 0;
+            foreach (var item in model.ToList())
+            {
+                parkingLength += (item.ParkLenght.Days * 24);
+                parkingLength += item.ParkLenght.Hours;
+            }
+
+            var garage = new GarageData
+            {
+                Vehicles = await model.ToListAsync(),
+                Garage = new GarageModel
+                {
+                    SpacesOccupied = context.Count(),
+                    TotalNrCars = context.Where(v => v.VehicleType == 0).Count(),
+                    TotalNrTrucks = context.Where(v => (int)v.VehicleType == 1).Count(),
+                    TotalNrMotorcycles = context.Where(v => (int)v.VehicleType == 2).Count(),
+                    TotalNrBoats = context.Where(v => (int)v.VehicleType == 3).Count(),
+                    TotalNrAirplanes = context.Where(v => (int)v.VehicleType == 4).Count(),
+                    TotalNrOfWheels = _context.ParkedVehicle.Select(v => v.Wheels).Sum(),
+                    TotalProfit = parkingLength * 10
+                }
+            };
+
+            return View(nameof(Overview), garage);
         }
 
         // GET: ParkedVehicles/Details/5
@@ -113,29 +160,55 @@ namespace Garage2.Controllers
             {
                 return NotFound();
             }
-            return View(parkedVehicle);
+
+            var viewModel = new EditVehicleViewModel
+            {
+                VehicleType = parkedVehicle.VehicleType,
+                RegNr = parkedVehicle.RegNr,
+                Color = parkedVehicle.Color,
+                Brand = parkedVehicle.Brand,
+                Model = parkedVehicle.Model,
+                Wheels = parkedVehicle.Wheels
+            };
+
+            return View(viewModel);
         }
 
         // POST: ParkedVehicles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels")] EditVehicleViewModel viewModel)
         {
-            if (id != parkedVehicle.RegNr)
+            if (id != viewModel.RegNr)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                // Get the existing entity from the database
+                var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
+
+                if (parkedVehicle == null)
                 {
+                    return NotFound();
+                }
+
+                parkedVehicle.VehicleType = viewModel.VehicleType;
+                parkedVehicle.Color = viewModel.Color;
+                parkedVehicle.Brand = viewModel.Brand;
+                parkedVehicle.Model = viewModel.Model;
+                parkedVehicle.Wheels = viewModel.Wheels;
+
+                try
+                    {
                     _context.Update(parkedVehicle);
+                    _context.Entry(parkedVehicle).Property(v => v.Arrival).IsModified = false;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ParkedVehicleExists(parkedVehicle.RegNr))
+                    if (!ParkedVehicleExists(viewModel.RegNr))
                     {
                         return NotFound();
                     }
@@ -146,7 +219,7 @@ namespace Garage2.Controllers
                 }
                 return RedirectToAction(nameof(Overview));
             }
-            return View(parkedVehicle);
+            return View(viewModel);
         }
 
         // GET: ParkedVehicles/Delete/5
