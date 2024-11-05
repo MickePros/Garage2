@@ -87,8 +87,6 @@ namespace Garage2.Controllers
         }
 
         // POST: ParkedVehicles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
@@ -119,8 +117,6 @@ namespace Garage2.Controllers
         }
 
         // POST: ParkedVehicles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("VehicleType,RegNr,Color,Brand,Model,Wheels,Arrival")] ParkedVehicle parkedVehicle)
@@ -179,41 +175,48 @@ namespace Garage2.Controllers
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
+                // Ta bort fordonet
                 _context.ParkedVehicle.Remove(parkedVehicle);
+                await _context.SaveChangesAsync();
+
+                // Omdirigera till kvittovyn
+                var receiptViewModel = new ReceiptViewModel
+                {
+                    RegNr = parkedVehicle.RegNr,
+                    Arrival = parkedVehicle.Arrival,
+                    Departure = DateTime.Now // Sätt tiden för avresa till nu
+                };
+                return View("Receipt", receiptViewModel); // Rendera kvittovyn med modellen
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Overview));
         }
 
-        // GET: ParkedVehicles/Checkout
-public async Task<IActionResult> Checkout(string id)
-{
-    if (string.IsNullOrWhiteSpace(id))
-    {
-        return NotFound();
-    }
+        // Ny metod för att generera kvitto
+        public async Task<IActionResult> Receipt(string regNr)
+        {
+            if (string.IsNullOrWhiteSpace(regNr))
+            {
+                return BadRequest("Registration number is required.");
+            }
 
-    var parkedVehicle = await _context.ParkedVehicle
-        .FirstOrDefaultAsync(m => m.RegNr == id);
-    if (parkedVehicle == null)
-    {
-        return NotFound();
-    }
+            var parkedVehicle = await _context.ParkedVehicle.FirstOrDefaultAsync(v => v.RegNr == regNr);
+            if (parkedVehicle == null)
+            {
+                return NotFound(); // Returnerar 404 om fordonet inte hittas
+            }
 
-    // Skapar ReceiptViewModel
-    var receipt = new ReceiptViewModel
-    {
-        RegNr = parkedVehicle.RegNr,
-        Arrival = parkedVehicle.Arrival,
-        Departure = DateTime.Now, // Utcheckning
-    };
+            var receiptViewModel = new ReceiptViewModel
+            {
+                RegNr = parkedVehicle.RegNr,
+                Arrival = parkedVehicle.Arrival,
+                Departure = DateTime.Now // Avresetid, sätts till nu
+            };
 
-    // Returnera vyn "Receipt" med ReceiptViewModel
-    return View("Receipt", receipt);
+            return View(receiptViewModel); // Returnera kvittovyn med modellen
         }
 
-        private bool ParkedVehicleExists(string id)
+    private bool ParkedVehicleExists(string id)
         {
             return _context.ParkedVehicle.Any(e => e.RegNr == id);
         }
