@@ -251,17 +251,7 @@ namespace Garage2.Controllers
                 // Ta bort fordonet
                 _context.ParkedVehicle.Remove(parkedVehicle);
                 await _context.SaveChangesAsync();
-
-                // Omdirigera till kvittovyn
-                var receiptViewModel = new ReceiptViewModel
-                {
-                    RegNr = parkedVehicle.RegNr,
-                    Arrival = parkedVehicle.Arrival,
-                    Departure = DateTime.Now // Sätt tiden för avresa till nu
-                };
-                return View("Receipt", receiptViewModel); // Rendera kvittovyn med modellen
             }
-
             return RedirectToAction(nameof(Overview));
         }
 
