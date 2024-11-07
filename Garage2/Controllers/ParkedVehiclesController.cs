@@ -147,6 +147,18 @@ namespace Garage2.Controllers
             return View(parkedVehicle);
         }
 
+        public ActionResult CheckRegNr(string regNr)
+        {
+            var parkedVehicle = _context.ParkedVehicle
+                .FirstOrDefault(m => m.RegNr == regNr);
+            if (parkedVehicle != null)
+            {
+                return Json($"{regNr} is already parked in the garage.");
+            }
+
+            return Json(true);
+        }
+
         // GET: ParkedVehicles/Edit/5
         public async Task<IActionResult> Edit(string id)
         {

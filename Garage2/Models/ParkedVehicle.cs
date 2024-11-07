@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garage2.Models
@@ -9,6 +10,7 @@ namespace Garage2.Models
 
         [Key]
         [Display(Name = "License plate")]
+        [Remote(action: "CheckRegNr", controller: "ParkedVehicles")]
         public string RegNr { get; set; }
 
         public string Color { get; set; }
