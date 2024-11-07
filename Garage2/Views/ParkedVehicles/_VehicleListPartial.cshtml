@@ -15,19 +15,19 @@
     </div>
 </form>
 
-<table class="table">
+<table class="table" data-toggle="table">
     <thead>
         <tr>
-            <th>
+            <th data-sortable="true" data-field="type">
                 @Html.DisplayNameFor(model => model.VehicleType)
             </th>
-            <th>
+            <th data-sortable="true" data-field="regnr">
                 @Html.DisplayNameFor(model => model.RegNr)
             </th>
-            <th>
+            <th data-sortable="true" data-field="arrival">
                 @Html.DisplayNameFor(model => model.Arrival)
             </th>
-            <th>
+            <th data-sortable="true" data-field="length">
                 @Html.DisplayNameFor(model => model.ParkLengthFormatted)
             </th>
             <th></th>

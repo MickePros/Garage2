@@ -29,7 +29,7 @@ body {
     margin-left: 5px;
 }
 
-th {
+th .sortable {
     cursor: pointer;
     text-decoration:underline;
 }
