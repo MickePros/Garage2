@@ -10,7 +10,7 @@ namespace Garage2.Models
 
         [Key]
         [Display(Name = "License plate")]
-        [Remote(action: "CheckRegNr", controller: "ParkedVehicles")]
+        [Remote("CheckRegNr", "ParkedVehicles")]
         public string RegNr { get; set; }
 
         public string Color { get; set; }

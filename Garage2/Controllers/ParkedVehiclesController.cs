@@ -147,6 +147,7 @@ namespace Garage2.Controllers
             return View(parkedVehicle);
         }
 
+        // Remote: Check if RegNr exists in DB
         public ActionResult CheckRegNr(string regNr)
         {
             var parkedVehicle = _context.ParkedVehicle
@@ -155,7 +156,6 @@ namespace Garage2.Controllers
             {
                 return Json($"{regNr} is already parked in the garage.");
             }
-
             return Json(true);
         }
 
