@@ -6,9 +6,10 @@ namespace Garage2.Models.Entities
     {
         [Key]
         public int TransactionId {get; set; }
-        public int VehicleId {get; set;}
 
-        public int SlotId {get; set;}   
+        public int RegNr {get; set;}
+
+        public int ParkingSpaceId { get; set;}   
 
     }
 }
