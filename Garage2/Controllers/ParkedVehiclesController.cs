@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage2.Data;
 using Garage2.Models;
+using System.Text.RegularExpressions;
 
 namespace Garage2.Controllers
 {
@@ -248,9 +249,20 @@ namespace Garage2.Controllers
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
+                // Prepare receipt data before deleting
+                var receiptViewModel = new ReceiptViewModel
+                {
+                    RegNr = parkedVehicle.RegNr,
+                    Arrival = parkedVehicle.Arrival,
+                    Departure = DateTime.Now // Set departure to current time
+                };
+
+                // Save receipt data in TempData to pass it to the Receipt action
+                TempData["ReceiptData"] = Newtonsoft.Json.JsonConvert.SerializeObject(receiptViewModel);
                 // Ta bort fordonet
                 _context.ParkedVehicle.Remove(parkedVehicle);
                 await _context.SaveChangesAsync();
+            return RedirectToAction("Receipt", new { regNr = id });
             }
             return RedirectToAction(nameof(Overview));
         }
@@ -258,25 +270,34 @@ namespace Garage2.Controllers
         // Ny metod för att generera kvitto
         public async Task<IActionResult> Receipt(string regNr)
         {
-            if (string.IsNullOrWhiteSpace(regNr))
+            // Retrieve receipt data from TempData
+            if (TempData["ReceiptData"] is string receiptDataJson)
             {
-                return BadRequest("Registration number is required.");
+                var receiptViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<ReceiptViewModel>(receiptDataJson);
+                return View(receiptViewModel);
             }
 
-            var parkedVehicle = await _context.ParkedVehicle.FirstOrDefaultAsync(v => v.RegNr == regNr);
-            if (parkedVehicle == null)
-            {
-                return NotFound(); // Returnerar 404 om fordonet inte hittas
-            }
+            return RedirectToAction(nameof(Overview));
 
-            var receiptViewModel = new ReceiptViewModel
-            {
-                RegNr = parkedVehicle.RegNr,
-                Arrival = parkedVehicle.Arrival,
-                Departure = DateTime.Now // Avresetid, sätts till nu
-            };
+            //if (string.IsNullOrWhiteSpace(regNr))
+            //{
+            //    return BadRequest("Registration number is required.");
+            //}
 
-            return View(receiptViewModel); // Returnera kvittovyn med modellen
+            //var parkedVehicle = await _context.ParkedVehicle.FirstOrDefaultAsync(v => v.RegNr == regNr);
+            //if (parkedVehicle == null)
+            //{
+            //    return NotFound(); // Returnerar 404 om fordonet inte hittas
+            //}
+
+            //var receiptViewModel = new ReceiptViewModel
+            //{
+            //    RegNr = parkedVehicle.RegNr,
+            //    Arrival = parkedVehicle.Arrival,
+            //    Departure = DateTime.Now // Avresetid, sätts till nu
+            //};
+
+            //return View(receiptViewModel); // Returnera kvittovyn med modellen
         }
 
     private bool ParkedVehicleExists(string id)
