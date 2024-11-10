@@ -26,8 +26,8 @@
 @section Scripts {
     <script>
      
-        document.getElementById("printPdfButton").addEventListener("click", function () {
-            const receiptContent = document.getElementById("receiptContent");
+        document.querySelector("#printPdfButton").addEventListener("click", function () {
+            const receiptContent = document.querySelector("#receiptContent");
 
             const options = {
                 margin: 0.5,
