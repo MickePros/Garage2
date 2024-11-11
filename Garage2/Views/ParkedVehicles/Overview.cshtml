@@ -10,6 +10,8 @@
     <a asp-action="Create">Check In</a>
 </p>
 
+@Html.Partial("_GarageFeedbackPartial")
+
 @Html.Partial("_GarageSizePartial", Model.Garage)
 
 @Html.Partial("_VehicleListPartial", Model.Vehicles)
