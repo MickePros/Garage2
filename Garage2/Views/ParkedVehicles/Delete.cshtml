@@ -8,7 +8,6 @@
 
 <h3>Are you sure you want to check out this vehicle?</h3>
 <div>
-    <h4>Parked Vehicle Details</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.VehicleType)</dt>
@@ -28,9 +27,9 @@
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="RegNr" />
         <input type="submit" value="Check Out" class="btn btn-danger" />
-        <a asp-action="Overview" class="btn btn-secondary">Back to Overview</a>
+        <a asp-action="Overview" class="btn btn-secondary">Back</a>
     </form>
 
     <!-- Knapp för att visa kvitto -->
-    <a asp-action="Receipt" asp-route-regNr="@Model.RegNr" class="btn btn-info">Get Receipt</a>
+    @* <a asp-action="Receipt" asp-route-regNr="@Model.RegNr" class="btn btn-info">Get Receipt</a> *@
 </div>
