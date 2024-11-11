@@ -14,6 +14,10 @@ namespace Garage2.Controllers
     public class ParkedVehiclesController : Controller
     {
         private readonly Garage2Context _context;
+        [TempData]
+        public string Message { get; set; }
+        [TempData]
+        public string Alert { get; set; }
 
         public ParkedVehiclesController(Garage2Context context)
         {
@@ -143,9 +147,23 @@ namespace Garage2.Controllers
             {
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
+                Alert = "success";
+                Message = $"Vehicle with license plate {parkedVehicle.RegNr} successfully parked";
                 return RedirectToAction(nameof(Overview));
             }
             return View(parkedVehicle);
+        }
+
+        // Remote: Check if RegNr exists in DB
+        public ActionResult CheckRegNr(string regNr)
+        {
+            var parkedVehicle = _context.ParkedVehicle
+                .FirstOrDefault(m => m.RegNr == regNr);
+            if (parkedVehicle != null)
+            {
+                return Json($"{regNr} is already parked in the garage.");
+            }
+            return Json(true);
         }
 
         // GET: ParkedVehicles/Edit/5
@@ -206,6 +224,8 @@ namespace Garage2.Controllers
                     _context.Update(parkedVehicle);
                     _context.Entry(parkedVehicle).Property(v => v.Arrival).IsModified = false;
                     await _context.SaveChangesAsync();
+                    Alert = "success";
+                    Message = $"Vehicle with license plate {parkedVehicle.RegNr} successfully edited";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -262,7 +282,10 @@ namespace Garage2.Controllers
                 // Ta bort fordonet
                 _context.ParkedVehicle.Remove(parkedVehicle);
                 await _context.SaveChangesAsync();
-            return RedirectToAction("Receipt", new { regNr = id });
+
+                Alert = "success";
+                Message = $"Vehicle with license plate {parkedVehicle.RegNr} has successfully left the garage";
+                return RedirectToAction("Receipt", new { regNr = id });
             }
             return RedirectToAction(nameof(Overview));
         }
